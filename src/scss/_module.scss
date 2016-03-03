@@ -1,0 +1,124 @@
+@charset "utf-8";
+
+
+/**
+ * 背景画像を指定
+ * @param $name:String ファイル名
+ * @param $path:String 画像パス
+ * @param $repeat:String repeatの値
+ * @param $width:Int コンテナのwidth
+ * @param $height:Int コンテナのheight
+ * @param $left:String Leftの値(要px)
+ * @param $top:String Topの値(要px)
+ */
+@mixin bgImage($name, $path:"", $repeat:no-repeat, $width:0, $height:0, $left:0, $top:0){
+	@if $width == 0{
+		$width : image-width($path + $name);
+	}
+	@if $height == 0{
+		$height : image-height($path + $name);
+	}
+	width : $width;
+	height : $height;
+	background : url($path + $name) $eft $top $repeat;
+}
+
+/**
+ * 背景画像を指定:SP版
+ * @param $name:String ファイル名
+ * @param $path:String 画像パス
+ * @param $repeat:String repeatの値
+ * @param $width:Int コンテナのwidth
+ * @param $height:Int コンテナのheight
+ * @param $left:String Leftの値(要px)
+ * @param $top:String Topの値(要px)
+ */
+@mixin bgImageSP($name, $path:"", $repeat:no-repeat, $width:0, $height:0, $left:0, $top:0){
+	@if $width == 0{
+		$width : ceil(image-width($path + $name) / 2);
+	}
+	@if $height == 0{
+		$height : ceil(image-height($path + $name) / 2);
+	}
+	width : $width;
+	height : $height;
+	background : url($path + $name) $eft $top $repeat;
+	@include background-size($width auto);
+}
+
+
+
+
+
+/**
+ * 画像からスプライトシートを作成してスタイルを挿入
+ * @param $src:String 画像のソース
+ * @param $indexList:Array 添字のリスト(最初のオブジェクトはname固定)
+ * @param $objList:Array 設定用オブジェクト
+ */
+@mixin spriteBg($src, $indexList, $objList){
+	$data : sprite-map($src);
+	@each $obj in $objList{
+		$name : nth($obj, index($indexList, $name));
+		.#{$name}{
+			@for $i from 2 through length($obj){
+				#{nth($indexList, $i)} : nth($obj, $i);
+			}
+			background : sprite($data, $name);
+			@include sprite-dimensions($data, $name);
+		}
+	}
+}
+
+/**
+ * 画像からスプライトシートを作成してリンク状態を作成
+ * @param $src:String 画像のソース
+ * @param $nameList:Array ファイル名リスト
+ * @param $ratio:Float 拡大率 def:1
+ */
+@mixin spriteAnchor($src, $nameList, $ratio:1){
+	$data : sprite-map($src);
+	$url : sprite-url($data);
+	$imgWidth : ceil(image-width(sprite-path($data)));
+	@each $name in $nameList{
+		.#{$name}{
+			$sprFile : sprite-file($data, $name + "_def");
+			background-image : $url;
+			background-repeat : no-repeat;
+			overflow : hidden;
+			$width : ceil(image-width($sprFile) / $ratio);
+			$height : ceil(image-height($sprFile) / $ratio);
+			$top : ceil(nth(sprite-position($data, $name + "_def"), 2) / $ratio);
+			width: $width;
+			height : $height;
+			background-position : 0 $top;
+			@include background-size($imageWidth auto);
+		}
+		/*.#{$name}:hover{
+			$sprFile : sprite-file($data, $name + "_over");
+			background-image : $url;
+			background-repeat : no-repeat;
+			overflow : hidden;
+			$width : ceil(image-width($sprFile) / $ratio);
+			$height : ceil(image-height($sprFile) / $ratio);
+			$top : ceil(nth(sprite-position($data, $name + "over"), 2) / $ratio);
+			width: $width;
+			height : $height;
+			background-position : 0 $top;
+			@include background-size($imageWidth auto);
+		}*/
+		.#{$name}.current{
+			$sprFile : sprite-file($data, $name + "_current");
+			background-image : $url;
+			background-repeat : no-repeat;
+			overflow : hidden;
+			$width : ceil(image-width($sprFile) / $ratio);
+			$height : ceil(image-height($sprFile) / $ratio);
+			$top : ceil(nth(sprite-position($data, $name + "_current"), 2) / $ratio);
+			width: $width;
+			height : $height;
+			background-position : 0 $top;
+			@include background-size($imageWidth auto);
+		}
+	}
+}

@@ -1,0 +1,25 @@
+{
+  "name": "gulpbase",
+  "version": "1.0.0",
+  "description": "Gulp Base Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sacrifs",
+  "license": "MIT",
+  "devDependencies": {
+    "del": "^2.0.2",
+    "gulp": "^3.9.0",
+    "gulp-compass": "^2.1.0",
+    "gulp-connect": "^2.2.0",
+    "gulp-copy": "0.0.2",
+    "gulp-cssmin": "^0.1.7",
+    "gulp-imagemin": "^2.3.0",
+    "gulp-jade": "^1.1.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-uglify": "^1.4.2",
+    "gulp-watch": "^4.3.5",
+    "run-sequence": "^1.1.4"
+  }
+}
