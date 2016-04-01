@@ -8,7 +8,6 @@ var jade = require("gulp-jade");
 var uglify = require("gulp-uglify");
 var imagemin = require("gulp-imagemin");
 var del = require("del");
-var plumber = require("gulp-plumber");
 var runSequence = require("run-sequence");
 
 var path = {
@@ -47,7 +46,6 @@ gulp.task("compass", function(callback){
 var compassFunc = function(inner_path){
 	return function(){
 		return gulp.src(path.src + "/scss" + inner_path + "/*.scss")
-			.pipe(plumber)
 			.pipe(compass({
 				config_file : path.src + "/scss" + inner_path + "/_config.rb",
 				css : path.deploy + inner_path + "/css",
@@ -57,7 +55,7 @@ var compassFunc = function(inner_path){
 }
 
 //jade
-gulp.task("jade", function89{
+gulp.task("jade", function(){
 	return gulp.src([path.src + "/jade/{,**/}*.jade", "!"+path.src+"/jade/{,**}_*.jade"])
 		.pipe(jade({pretty:true}))
 		.pipe(gulp.dest(path.deploy));
@@ -82,25 +80,24 @@ gulp.task("cssmin", function(){
 //uglify
 gulp.task("uglify", function(){
 	return gulp.src(path.deploy + "/js/*.js")
-		.pipe(plumber())
 		.pipe(uglify({preserveComments : "some"}))
 		.pipe(gulp.dest(path.release+"/js"));
 });
 
 //connect
 gulp.task("connect", function(){
-	return connect.server({
-		port : 9001,
-		root : path.deploy,
-		livereload : true
+	return browserSync({
+		server:{
+			port : 9001,
+			baseDir : path.deploy
+		}
 	});
 });
 
 
 //reload
 gulp.task("reload", function(){
-	return gulp.src(path.deploy + "/{,**/}*.html")
-		.pipe(connect.reload());
+	return browserSync.reload();
 });
 
 //watch
@@ -122,7 +119,7 @@ gulp.task("release", function(callback){
 	);
 });*/
 
-gulp.task("compile", function(){
+gulp.task("compile", function(callback){
 	return runSequence(
 		["jade", "compass"],
 		"clean:release",
